@@ -1,0 +1,24 @@
+# Devin blueprint — build & test setup
+# Isolated build configuration. Not task instructions.
+
+repo: bank-account-transactions
+language: java
+jdk: "11"
+build_tool: gradle   # wrapper committed (./gradlew)
+
+setup:
+  # Requires JDK 11 on PATH. The Gradle wrapper pins the Gradle version.
+  - ./gradlew --no-daemon help
+
+build:
+  - ./gradlew --no-daemon assemble
+
+test:
+  # Tests run on embedded H2 (com.h2database:h2) with spring-rabbit-test.
+  - ./gradlew --no-daemon test
+
+services: none        # tests use embedded H2; docker-compose (Postgres + RabbitMQ) is only for running the app
+
+notes: |
+  sourceCompatibility = 11. JUnit Platform (useJUnitPlatform()).
+  PostgreSQL is a runtimeOnly dependency for the running application, not for tests.
